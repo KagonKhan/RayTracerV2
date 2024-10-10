@@ -2,15 +2,16 @@
     "version": 8,
     "configurePresets": [
         {
-            "name": "default",
-            "description": "default settings",
+            "name": "debug",
+            "description": "debug",
             "hidden": false,
-            "generator": "Ninja",
             "binaryDir": "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "YES"
-            }
+            },
+            "toolchainFile": "out/conan_toolchain.cmake"
+
         }
     ]
     
