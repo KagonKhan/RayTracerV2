@@ -55,9 +55,29 @@ void App::renderApp() {
   ImGui::Text("%.3f ms", dtime / 1000.f);
   ImGui::End();
   ImGui::Begin("Scene");
-  renderer.render();
+
+  auto width = ImGui::GetContentRegionAvail().x;
+  auto height = ImGui::GetContentRegionAvail().y;
+  renderer.onResize({(int)width, (int)height});
+  auto image = renderer.render();
+
+  ImGui::Image((ImTextureID)(intptr_t)image->getID(),
+               {(float)image->getSize().x, (float)image->getSize().y},
+               ImVec2(0, 1), ImVec2(1, 0));
 
   ImGui::End();
   ImGui::End();
 }
-void Renderer::render() { this->image.draw(); }
+
+std::shared_ptr<Image> Renderer::render() {
+  for (int y = 0; y < image->getSize().y; ++y) {
+    for (int x = 0; x < image->getSize().x; ++x) {
+      auto index = y * image->getSize().x + x;
+      imageData[index] = rand() * 23478294 % 255;
+      imageData[index] |= 0xff000000;
+    }
+  }
+
+  image->setData(imageData);
+  return image;
+}
