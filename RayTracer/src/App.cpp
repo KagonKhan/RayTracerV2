@@ -3,7 +3,14 @@
 #include <chrono>
 
 void App::start() {
+  auto lastTime = std::chrono::high_resolution_clock::now();
   while (!glfwWindowShouldClose(window)) {
+    auto now = std::chrono::high_resolution_clock::now();
+    dtime =
+        std::chrono::duration_cast<std::chrono::microseconds>(now - lastTime)
+            .count();
+    lastTime = now;
+    auto lastTime = std::chrono::high_resolution_clock::now();
     glfwPollEvents();
 
     if (glfwGetWindowAttrib(window, GLFW_ICONIFIED) != 0) {
@@ -45,8 +52,12 @@ void App::prepareBackground() {
 
 void App::renderApp() {
   ImGui::Begin("Settings");
+  ImGui::Text("%.3f ms", dtime / 1000.f);
   ImGui::End();
   ImGui::Begin("Scene");
+  renderer.render();
+
   ImGui::End();
   ImGui::End();
 }
+void Renderer::render() { this->image.draw(); }
