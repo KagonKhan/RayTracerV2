@@ -23,6 +23,7 @@ add_executable(RayTracer
     RayTracer/src/MainWindow.cpp
     RayTracer/src/App.cpp
     RayTracer/src/Image.cpp
+    RayTracer/src/Renderer.cpp
 )
 
 add_subdirectory(external/src/ImGui)

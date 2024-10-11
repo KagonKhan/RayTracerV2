@@ -3,6 +3,8 @@
 #include <chrono>
 
 void App::start() {
+  Random::Init();
+
   auto lastTime = std::chrono::high_resolution_clock::now();
   while (!glfwWindowShouldClose(window)) {
     auto now = std::chrono::high_resolution_clock::now();
@@ -48,12 +50,14 @@ void App::prepareBackground() {
     ImGui::DockSpace(ImGui::GetID("AppDockspace"), ImVec2(0.0f, 0.0f),
                      ImGuiDockNodeFlags_NoUndocking);
   }
+  ImGui::End();
 }
 
 void App::renderApp() {
   ImGui::Begin("Settings");
   ImGui::Text("%.3f ms", dtime / 1000.f);
   ImGui::End();
+
   ImGui::Begin("Scene");
 
   auto width = ImGui::GetContentRegionAvail().x;
@@ -66,18 +70,4 @@ void App::renderApp() {
                ImVec2(0, 1), ImVec2(1, 0));
 
   ImGui::End();
-  ImGui::End();
-}
-
-std::shared_ptr<Image> Renderer::render() {
-  for (int y = 0; y < image->getSize().y; ++y) {
-    for (int x = 0; x < image->getSize().x; ++x) {
-      auto index = y * image->getSize().x + x;
-      imageData[index] = rand() * 23478294 % 255;
-      imageData[index] |= 0xff000000;
-    }
-  }
-
-  image->setData(imageData);
-  return image;
 }
