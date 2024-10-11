@@ -10,7 +10,7 @@ static void glfw_error_callback(int error, const char *description) {
   fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
 
-MainWindow::MainWindow(Vec2f size, const std::string &name) {
+MainWindow::MainWindow(Vec2i size, const std::string &name) {
   glfwSetErrorCallback(glfw_error_callback);
 
   if (!glfwInit())

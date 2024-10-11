@@ -4,7 +4,8 @@
         "iostream": "cpp",
         "algorithm": "cpp",
         "ranges": "cpp",
-        "*.rh": "cpp"
+        "*.rh": "cpp",
+        "type_traits": "cpp"
     },
     "editor.formatOnSave": true
 }

@@ -3,13 +3,13 @@
 
 #include <GLFW/glfw3.h>
 
-struct Vec2f {
-  float x;
-  float y;
+struct Vec2i {
+  int x;
+  int y;
 };
 class MainWindow {
 public:
-  MainWindow(Vec2f size, const std::string &name);
+  MainWindow(Vec2i size, const std::string &name);
   ~MainWindow();
 
   operator GLFWwindow *() const { return window; }
