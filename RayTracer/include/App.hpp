@@ -6,6 +6,9 @@
 #include "Renderer.hpp"
 #include <memory>
 
+#include "Matrix.hpp"
+#include "Point.hpp"
+#include "Vector.hpp"
 
 class App {
 public:
