@@ -3,10 +3,7 @@
 
 #include <GLFW/glfw3.h>
 
-struct Vec2i {
-  int x;
-  int y;
-};
+#include "Utils.hpp"
 class MainWindow {
 public:
   MainWindow(Vec2i size, const std::string &name);

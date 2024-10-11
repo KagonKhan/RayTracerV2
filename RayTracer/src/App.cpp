@@ -3,7 +3,16 @@
 #include <chrono>
 
 void App::start() {
+  Random::Init();
+
+  auto lastTime = std::chrono::high_resolution_clock::now();
   while (!glfwWindowShouldClose(window)) {
+    auto now = std::chrono::high_resolution_clock::now();
+    dtime =
+        std::chrono::duration_cast<std::chrono::microseconds>(now - lastTime)
+            .count();
+    lastTime = now;
+    auto lastTime = std::chrono::high_resolution_clock::now();
     glfwPollEvents();
 
     if (glfwGetWindowAttrib(window, GLFW_ICONIFIED) != 0) {
@@ -41,12 +50,24 @@ void App::prepareBackground() {
     ImGui::DockSpace(ImGui::GetID("AppDockspace"), ImVec2(0.0f, 0.0f),
                      ImGuiDockNodeFlags_NoUndocking);
   }
+  ImGui::End();
 }
 
 void App::renderApp() {
   ImGui::Begin("Settings");
+  ImGui::Text("%.3f ms", dtime / 1000.f);
   ImGui::End();
+
   ImGui::Begin("Scene");
-  ImGui::End();
+
+  auto width = ImGui::GetContentRegionAvail().x;
+  auto height = ImGui::GetContentRegionAvail().y;
+  renderer.onResize({(int)width, (int)height});
+  auto image = renderer.render();
+
+  ImGui::Image((ImTextureID)(intptr_t)image->getID(),
+               {(float)image->getSize().x, (float)image->getSize().y},
+               ImVec2(0, 1), ImVec2(1, 0));
+
   ImGui::End();
 }
