@@ -75,5 +75,16 @@
         "xtree": "cpp",
         "xutility": "cpp"
     },
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "clang-format.executable": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\x64\\bin\\clang-format.exe",
+    "testMate.cpp.test.advancedExecutables": [
+        {
+            "pattern": "{build,Build,BUILD,out,Out,OUT}/**/*{test,Test,TEST}*",
+            "runTask": {
+                "before": [
+                    "build tests",
+                ],
+            },
+        },
+    ],
 }

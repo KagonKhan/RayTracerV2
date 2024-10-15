@@ -4,7 +4,7 @@
 
 namespace RayMath {
 
-constexpr float constexpr_sqrt(double val) noexcept {
+constexpr float constexpr_sqrt(float val) noexcept {
   float curr = val;
   float prev = 0;
 
@@ -15,58 +15,61 @@ constexpr float constexpr_sqrt(double val) noexcept {
   return curr;
 }
 
+
 struct Vector {
-  std::array<float, 4> data{0, 0, 0, 0};
-  float &operator[](int index) { return data[index]; }
-  float operator[](int index) const { return data[index]; }
+  Vector() = default;
+  float x{ 0 }, y{ 0 }, z{ 0 }, w{ 0 };
+
   auto operator<=>(Vector const &) const noexcept = default;
 
-  Vector(float x, float y, float z, float w = 0) noexcept
-      : data({x, y, z, w}) {}
-
-  Vector operator+(Vector const &rhs) const noexcept {
-    return {data[0] + rhs.data[0], data[1] + rhs.data[1], data[2] + rhs.data[2],
-            data[3] + rhs.data[3]};
+  inline  Vector(float x, float y, float z, float w = 0) noexcept : x(x), y(y), z(z), w(w)       {}
+  
+  /*
+  inline  Vector operator+(Vector const &rhs) const noexcept {
+    return {x + rhs.x, y + rhs.y, z + rhs.z,
+            w + rhs.w};
   }
-  Vector operator-(Vector const &rhs) const noexcept {
-    return {data[0] - rhs.data[0], data[1] - rhs.data[1], data[2] - rhs.data[2],
-            data[3] - rhs.data[3]};
+  inline Vector operator-(Vector const &rhs) const noexcept {
+    return {x - rhs.x, y - rhs.y, z - rhs.z,
+            w - rhs.w};
   }
-  Vector operator-() const noexcept {
-    return {-data[0], -data[1], -data[2], -data[3]};
-  }
-
-  Vector operator*(float scalar) const noexcept {
-    return {data[0] * scalar, data[1] * scalar, data[2] * scalar,
-            data[3] * scalar};
-  }
-  Vector operator/(float scalar) const noexcept {
-    return {data[0] / scalar, data[1] / scalar, data[2] / scalar,
-            data[3] / scalar};
+  inline Vector operator-() const noexcept {
+    return {-x, -y, -z, -w};
   }
 
-  Vector abs() const noexcept {
-    return {std::abs(data[0]), std::abs(data[1]), std::abs(data[2]),
-            std::abs(data[3])};
+   inline Vector abs() const noexcept {
+    return {std::abs(x), std::abs(y), std::abs(z),
+            std::abs(w)};
   }
 
-  float magnitude() const noexcept {
-    return constexpr_sqrt(data[0] * data[0] + data[1] * data[1] +
-                          data[2] * data[2] + data[3] * data[3]);
+  inline float magnitude() const noexcept {
+    return constexpr_sqrt(x * x + y * y +
+                          z * z + w * w);
   }
   Vector normalized() const noexcept { return *this / magnitude(); }
-
-  auto dot(Vector const &b) const noexcept {
-    return data[0] * b[0] + data[1] * b[1] + data[2] * b[2] + data[3] * b[3];
-  }
-  Vector cross(Vector const &b) const noexcept {
-    return {data[1] * b[2] - data[2] * b[1], data[2] * b[0] - data[0] * b[2],
-            data[0] * b[1] - data[1] * b[0]};
+    inline Vector cross(Vector const &b) const noexcept {
+    return {y * b.z - z * b.y, z * b.x - x * b.z,
+            x * b.y - y * b.x};
   }
 
   Vector reflect(Vector const &norm) const noexcept {
     return *this - norm * (2 * dot(norm));
   }
+  */
+  inline Vector operator*(float scalar) const noexcept {
+    return {x * scalar, y * scalar, z * scalar,
+            w * scalar};
+  }
+  inline  Vector operator/(float scalar) const noexcept {
+    return {x / scalar, y / scalar, z / scalar,
+            w / scalar};
+  }
+
+ 
+  inline float dot(Vector const &b) const noexcept {
+    return x * b.x + y * b.y + z * b.z + w * b.w;
+  }
+
 };
 
 } // namespace RayMath

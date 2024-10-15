@@ -1,5 +1,4 @@
 #include "Image.hpp"
-
 #include <GLFW/glfw3.h>
 
 Image::Image(Vec2i size) : size(size) {
