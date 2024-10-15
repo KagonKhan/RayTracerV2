@@ -125,7 +125,7 @@ public:
     return {v1, v2, v3, v4};
   }
 
-  Matrix Transposed() const {
+  Matrix transposed() const {
     Matrix retVal;
     for (int row = 0; row < 4; row++)
       for (int col = 0; col < 4; col++)
@@ -134,7 +134,7 @@ public:
     return retVal;
   }
 
-  Matrix Inversed() const {
+  Matrix inversed() const {
     Matrix retVal{1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f,
                   0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f};
     Matrix a = *this;
@@ -167,43 +167,43 @@ public:
     return retVal;
   }
 
-  Matrix Translated(float x, float y, float z) const noexcept {
-    return Matrix{1.f, 0.f, 0.f, x, 0.f, 1.f, 0.f, y,
-                  0.f, 0.f, 1.f, z, 0.f, 0.f, 0.f, 1.f} *
-           *this;
-  }
-  Matrix Scaled(float x, float y, float z) const noexcept {
-    return Matrix{x,   0.f, 0.f, 0.f, 0.f, y,   0.f, 0.f,
-                  0.f, 0.f, z,   0.f, 0.f, 0.f, 0.f, 1.f} *
-           *this;
-  }
-  Matrix Sheared(float Xy = 0, float Xz = 0, float Yx = 0, float Yz = 0,
-                 float Zx = 0, float Zy = 0) const noexcept {
-    return Matrix{1.f, Xy, Xz,  0.f, Yx,  1.f, Yz,  0.f,
-                  Zx,  Zy, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f} *
-           *this;
-  }
-  Matrix RotatedX(float r) const noexcept {
-    float c = std::cos(r), s = std::sin(r);
+  // Matrix translated(float x, float y, float z) const noexcept {
+  //   return Matrix{1.f, 0.f, 0.f, x, 0.f, 1.f, 0.f, y,
+  //                 0.f, 0.f, 1.f, z, 0.f, 0.f, 0.f, 1.f} *
+  //          *this;
+  // }
+  // Matrix Scaled(float x, float y, float z) const noexcept {
+  //   return Matrix{x,   0.f, 0.f, 0.f, 0.f, y,   0.f, 0.f,
+  //                 0.f, 0.f, z,   0.f, 0.f, 0.f, 0.f, 1.f} *
+  //          *this;
+  // }
+  // Matrix Sheared(float Xy = 0, float Xz = 0, float Yx = 0, float Yz = 0,
+  //                float Zx = 0, float Zy = 0) const noexcept {
+  //   return Matrix{1.f, Xy, Xz,  0.f, Yx,  1.f, Yz,  0.f,
+  //                 Zx,  Zy, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f} *
+  //          *this;
+  // }
+  // Matrix RotatedX(float r) const noexcept {
+  //   float c = std::cos(r), s = std::sin(r);
 
-    return Matrix{1.f, 0.f, 0.f, 0.f, 0.f, c,   -s,  0.f,
-                  0.f, s,   c,   0.f, 0.f, 0.f, 0.f, 1.f} *
-           *this;
-  }
-  Matrix RotatedY(float r) const noexcept {
-    float c = std::cos(r), s = std::sin(r);
+  //   return Matrix{1.f, 0.f, 0.f, 0.f, 0.f, c,   -s,  0.f,
+  //                 0.f, s,   c,   0.f, 0.f, 0.f, 0.f, 1.f} *
+  //          *this;
+  // }
+  // Matrix RotatedY(float r) const noexcept {
+  //   float c = std::cos(r), s = std::sin(r);
 
-    return Matrix{c,  0.f, s, 0.f, 0.f, 1.f, 0.f, 0.f,
-                  -s, 0.f, c, 0.f, 0.f, 0.f, 0.f, 1.f} *
-           *this;
-  }
-  Matrix RotatedZ(float r) const noexcept {
-    float c = std::cos(r), s = std::sin(r);
+  //   return Matrix{c,  0.f, s, 0.f, 0.f, 1.f, 0.f, 0.f,
+  //                 -s, 0.f, c, 0.f, 0.f, 0.f, 0.f, 1.f} *
+  //          *this;
+  // }
+  // Matrix RotatedZ(float r) const noexcept {
+  //   float c = std::cos(r), s = std::sin(r);
 
-    return Matrix{c,   -s,  0.f, 0.f, s,   c,   0.f, 0.f,
-                  0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f} *
-           *this;
-  }
+  //   return Matrix{c,   -s,  0.f, 0.f, s,   c,   0.f, 0.f,
+  //                 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f} *
+  //          *this;
+  // }
 };
 
 } // namespace RayMath

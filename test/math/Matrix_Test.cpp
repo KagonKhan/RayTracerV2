@@ -66,7 +66,7 @@ TEST_F(MatrixTests, MatrixTranspositionTest) {
   Matrix m2(0.f, 9.f, 1.f, 0.f, 9.f, 8.f, 8.f, 0.f, 3.f, 0.f, 5.f, 5.f, 0.f,
             8.f, 3.f, 8.f);
 
-  ASSERT_EQ(m1.Transposed(), m2);
+  ASSERT_EQ(m1.transposed(), m2);
 }
 
 TEST_F(MatrixTests, MatrixInverseTest) {
@@ -77,5 +77,5 @@ TEST_F(MatrixTests, MatrixInverseTest) {
                   -0.44361f, 0.52068f, -0.07895f, -0.22368f, -0.05263f,
                   0.19737f, -0.52256f, -0.81391f, -0.30075f, 0.30639f);
 
-  ASSERT_EQ(m.Inversed(), expected);
+  ASSERT_EQ(m.inversed(), expected);
 }
