@@ -1,10 +1,18 @@
 
+find_package(GTest REQUIRED)
 include(GoogleTest)
 
-add_executable(VectorTest Vector_Test.cpp)
+function(add_gtest targetName)
+    add_executable(${targetName} ${ARGN})
 
-find_package(GTest REQUIRED)
-target_link_libraries(VectorTest PRIVATE gtest::gtest)
-target_include_directories(VectorTest PUBLIC ${PROJECT_SOURCE_DIR}/RayTracer/include)
+    target_link_libraries(${targetName} PRIVATE gtest::gtest)
+    target_include_directories(${targetName} PUBLIC ${PROJECT_SOURCE_DIR}/RayTracer/include)
 
-gtest_discover_tests(VectorTest)
+    gtest_discover_tests(${targetName})
+endfunction()
+
+add_gtest(VectorTest Vector_Test.cpp)
+
+add_gtest(PointTest Point_Test.cpp)
+
+add_gtest(MatrixTest Matrix_Test.cpp)

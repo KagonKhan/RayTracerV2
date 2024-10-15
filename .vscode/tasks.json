@@ -7,7 +7,7 @@
 			"command": "build",
 			"group": "build",
 			"targets": [
-				"VectorTest"
+				"ALL_BUILD"
 			]
 			// TODO: make a list of all test targets?
 		},
