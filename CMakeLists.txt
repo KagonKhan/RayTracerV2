@@ -36,5 +36,6 @@ target_link_libraries(RayTracer fmt::fmt ImGui)
 
 set_property(TARGET RayTracer PROPERTY CXX_STANDARD 23)
 
-# include(CTest)
-# enable_testing()
+enable_testing()
+
+add_subdirectory(test)

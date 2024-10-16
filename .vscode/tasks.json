@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "build tests",
+			"type": "cmake",
+			"command": "build",
+			"group": "build",
+			"targets": [
+				"ALL_BUILD"
+			]
+			// TODO: make a list of all test targets?
+		},
+	]
+}

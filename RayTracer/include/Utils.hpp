@@ -2,18 +2,15 @@
 #include <compare>
 #include <random>
 
-struct Vec2i {
-  int x;
-  int y;
+template <typename T> struct Vec2 {
+  T x;
+  T y;
 
-  constexpr auto operator<=>(Vec2i const &) const noexcept = default;
+  constexpr auto operator<=>(Vec2<T> const &) const noexcept = default;
 };
-struct Vec2f {
-  float x;
-  float y;
 
-  constexpr auto operator<=>(Vec2f const &) const noexcept = default;
-};
+using Vec2i = Vec2<int>;
+using Vec2f = Vec2<float>;
 
 class Random {
 public:

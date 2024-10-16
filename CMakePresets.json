@@ -6,11 +6,11 @@
             "description": "debug",
             "hidden": false,
             "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "YES"
-            },
-            "toolchainFile": "out/conan_toolchain.cmake"
+          "cacheVariables": {
+            "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+            "CMAKE_EXPORT_COMPILE_COMMANDS": "YES"
+          },
+            "toolchainFile": "out/build/generators/conan_toolchain.cmake"
         },
         {
             "name": "Configure preset using toolchain file",
@@ -19,7 +19,7 @@
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
                 "CMAKE_TOOLCHAIN_FILE": "",
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
             }
