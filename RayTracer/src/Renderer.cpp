@@ -1,7 +1,7 @@
 #include "Renderer.hpp"
 
-#include "Point.hpp"
-#include "Vector.hpp"
+#include "RayMath/Point.hpp"
+#include "RayMath/Vector.hpp"
 
 void Renderer::onResize(Vec2i newSize) {
   if (newSize != image->getSize()) {

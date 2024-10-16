@@ -1,7 +1,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "Matrix.hpp"
+#include "RayMath/Matrix.hpp"
 
 class MatrixTests : public testing::Test {};
 using namespace RayMath;

@@ -15,9 +15,6 @@ execute_process(COMMAND conan install . --output-folder=out --build=missing --se
 
 message("\n\nPOST\n\n")
 
-enable_testing()
-
-add_subdirectory(test)
 find_package(FMT REQUIRED)
 
 # https://github.com/conan-io/cmake-conan/blob/develop2/conan_provider.cmake
@@ -38,3 +35,7 @@ target_include_directories(RayTracer
 target_link_libraries(RayTracer fmt::fmt ImGui)
 
 set_property(TARGET RayTracer PROPERTY CXX_STANDARD 23)
+
+enable_testing()
+
+add_subdirectory(test)

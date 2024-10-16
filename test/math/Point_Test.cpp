@@ -1,5 +1,5 @@
 
-#include "Point.hpp"
+#include "RayMath/Point.hpp"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

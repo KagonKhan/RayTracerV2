@@ -6,7 +6,7 @@ function(add_gtest targetName)
     add_executable(${targetName} ${ARGN})
 
     target_link_libraries(${targetName} PRIVATE gtest::gtest)
-    target_include_directories(${targetName} PUBLIC ${PROJECT_SOURCE_DIR}/RayTracer/include)
+    target_include_directories(${targetName} PUBLIC ${PROJECT_SOURCE_DIR}/external/include)
 
     gtest_discover_tests(${targetName})
 endfunction()

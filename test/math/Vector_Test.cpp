@@ -1,5 +1,5 @@
 
-#include "Vector.hpp"
+#include "RayMath/Vector.hpp"
 #include "gtest/gtest.h"
 
 class VectorTests : public testing::Test {};
