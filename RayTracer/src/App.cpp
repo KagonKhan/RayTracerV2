@@ -1,4 +1,5 @@
 #include "App.hpp"
+#include "Input.hpp"
 
 #include <ImGui/imgui_impl_glfw.h>
 #include <chrono>
@@ -6,6 +7,7 @@
 
 void App::start () {
     Random::Init ();
+    Input::Bind (&window);
 
     auto lastTime = std::chrono::high_resolution_clock::now ();
     while (!glfwWindowShouldClose (window)) {
@@ -25,6 +27,8 @@ void App::start () {
         renderApp ();
         window.render ();
     }
+
+    Input::Unbind (&window);
 }
 
 void App::prepareBackground () {

@@ -8,7 +8,6 @@
 
 #include <memory>
 
-
 class App {
   public:
     void start ();

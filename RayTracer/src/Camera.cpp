@@ -1,8 +1,51 @@
 #include "Camera.hpp"
-
+#include "ImGui/imgui.h"
+#include "Input.hpp"
 Camera::Camera (float verticalFOV, float nearClip, float farClip) : m_VerticalFOV (verticalFOV), m_NearClip (nearClip), m_FarClip (farClip) {}
 
-bool Camera::onUpdate (float ts) { return false; }
+bool Camera::onUpdate (float ts) {
+    Vec2f mousePos = Input::MousePosition ();
+    Vec2f moveDelta{
+        .x = (mousePos.x - m_LastMousePosition.x) * 0.002f,
+        .y = (mousePos.y - m_LastMousePosition.y) * 0.002f,
+    };
+    m_LastMousePosition = mousePos;
+
+
+    // Movement
+    float           speed = 5.0f;
+    bool            moved = false;
+    RayMath::Vector upDirection (0.0f, 1.0f, 0.0f);
+    RayMath::Vector rightDirection = m_ForwardDirection.cross (upDirection);
+
+    if (Input::IsButtonPressed (Input::KeyButton::W)) {
+        m_Position = m_Position + m_ForwardDirection * speed * ts;
+        moved      = true;
+    } else if (Input::IsButtonPressed (Input::KeyButton::S)) {
+        m_Position = m_Position - m_ForwardDirection * speed * ts;
+        moved      = true;
+    }
+    if (Input::IsButtonPressed (Input::KeyButton::A)) {
+        m_Position = m_Position - rightDirection * speed * ts;
+        moved      = true;
+    } else if (Input::IsButtonPressed (Input::KeyButton::D)) {
+        m_Position = m_Position + rightDirection * speed * ts;
+        moved      = true;
+    }
+    if (Input::IsButtonPressed (Input::KeyButton::Q)) {
+        m_Position = m_Position - upDirection * speed * ts;
+        moved      = true;
+    } else if (Input::IsButtonPressed (Input::KeyButton::E)) {
+        m_Position = m_Position + upDirection * speed * ts;
+        moved      = true;
+    }
+
+
+    if (moved) {
+        RecalculateView ();
+        RecalculateRayDirections ();
+    }
+}
 
 void Camera::onResize (Vec2i size) {
     if (size.x == m_ViewportWidth && size.y == m_ViewportHeight)

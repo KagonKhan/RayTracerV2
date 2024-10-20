@@ -11,14 +11,12 @@ struct Camera {
     bool onUpdate (float ts);
     void onResize (Vec2i size);
 
-    const RayMath::Matrix &GetProjection () const { return m_Projection; }
-    const RayMath::Matrix &GetInverseProjection () const { return m_InverseProjection; }
-    const RayMath::Matrix &GetView () const { return m_View; }
-    const RayMath::Matrix &GetInverseView () const { return m_InverseView; }
-
-    const RayMath::Point  &GetPosition () const { return m_Position; }
-    const RayMath::Vector &GetDirection () const { return m_ForwardDirection; }
-
+    const RayMath::Matrix              &GetProjection () const { return m_Projection; }
+    const RayMath::Matrix              &GetInverseProjection () const { return m_InverseProjection; }
+    const RayMath::Matrix              &GetView () const { return m_View; }
+    const RayMath::Matrix              &GetInverseView () const { return m_InverseView; }
+    const RayMath::Point               &GetPosition () const { return m_Position; }
+    const RayMath::Vector              &GetDirection () const { return m_ForwardDirection; }
     const std::vector<RayMath::Vector> &GetRayDirections () const { return m_RayDirections; }
 
     float GetRotationSpeed ();
