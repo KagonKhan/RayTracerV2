@@ -27,11 +27,9 @@ struct Vector {
               std::abs(w)};
     }
 
-    Vector reflect(Vector const &norm) const noexcept {
-      return *this - norm * (2 * dot(norm));
-    }
     */
 
+    Vector        reflect (Vector const &norm) const noexcept { return *this - norm * (2 * dot (norm)); }
     inline Vector operator+ (Vector const &rhs) const noexcept { return {x + rhs.x, y + rhs.y, z + rhs.z, w + rhs.w}; }
     inline Vector operator- (Vector const &rhs) const noexcept { return {x - rhs.x, y - rhs.y, z - rhs.z, w - rhs.w}; }
     inline Vector operator* (float scalar) const noexcept { return {x * scalar, y * scalar, z * scalar, w * scalar}; }

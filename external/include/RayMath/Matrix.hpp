@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Point.hpp"
+#include "Vector.hpp"
 
 #include <array>
 #include <cmath>
@@ -31,12 +32,22 @@ class Matrix {
 
         std::cout << ")";
     }
+    static Matrix viewTransform (Point const &from, Point const &to, Vector const &up) {
+        Vector forward = (to - from).normalized ();
+        Vector left    = forward.cross (up.normalized ());
+        Vector trueUp  = left.cross (forward);
+        Vector nul     = Vector (0, 0, 0, 1);
 
+        Matrix orientation (left, trueUp, -forward, nul);
+
+        return orientation.translated (-from.x, -from.y, -from.z);
+    }
 
     std::array<float, 4 * 4> data{};
-    Matrix (float _)
+    Matrix () = default;
+    Matrix (float v)
         : data{
-              1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f,
+              v, 0.f, 0.f, 0.f, 0.f, v, 0.f, 0.f, 0.f, 0.f, v, 0.f, 0.f, 0.f, 0.f, v,
           } {}
 
     Matrix (Vector v1, Vector v2, Vector v3, Vector v4) {
@@ -48,7 +59,10 @@ class Matrix {
         }
     }
 
-    template <typename... Ts> Matrix (Ts &&...ts) : data{std::forward<Ts> (ts)...} {}
+
+    template <typename... Ts>
+        requires (std::floating_point<std::remove_reference_t<Ts>> && ...)
+    Matrix (Ts &&...ts) : data{std::forward<Ts> (ts)...} {}
 
     bool operator== (const Matrix &rhs) const noexcept {
         for (int i = 0; i < 16; i++)
@@ -160,42 +174,44 @@ class Matrix {
     Matrix translated (float x, float y, float z) const noexcept {
         return Matrix{1.f, 0.f, 0.f, x, 0.f, 1.f, 0.f, y, 0.f, 0.f, 1.f, z, 0.f, 0.f, 0.f, 1.f} * *this;
     }
-    // Matrix Scaled(float x, float y, float z) const noexcept {
-    //   return Matrix{x,   0.f, 0.f, 0.f, 0.f, y,   0.f, 0.f,
-    //                 0.f, 0.f, z,   0.f, 0.f, 0.f, 0.f, 1.f} *
-    //          *this;
-    // }
-    // Matrix Sheared(float Xy = 0, float Xz = 0, float Yx = 0, float Yz = 0,
-    //                float Zx = 0, float Zy = 0) const noexcept {
-    //   return Matrix{1.f, Xy, Xz,  0.f, Yx,  1.f, Yz,  0.f,
-    //                 Zx,  Zy, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f} *
-    //          *this;
-    // }
-    // Matrix RotatedX(float r) const noexcept {
-    //   float c = std::cos(r), s = std::sin(r);
+    Matrix Scaled (float x, float y, float z) const noexcept {
+        return Matrix{x, 0.f, 0.f, 0.f, 0.f, y, 0.f, 0.f, 0.f, 0.f, z, 0.f, 0.f, 0.f, 0.f, 1.f} * *this;
+    }
+    Matrix Sheared (float Xy = 0, float Xz = 0, float Yx = 0, float Yz = 0, float Zx = 0, float Zy = 0) const noexcept {
+        return Matrix{1.f, Xy, Xz, 0.f, Yx, 1.f, Yz, 0.f, Zx, Zy, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f} * *this;
+    }
+    Matrix RotatedX (float r) const noexcept {
+        float c = std::cos (r), s = std::sin (r);
 
-    //   return Matrix{1.f, 0.f, 0.f, 0.f, 0.f, c,   -s,  0.f,
-    //                 0.f, s,   c,   0.f, 0.f, 0.f, 0.f, 1.f} *
-    //          *this;
-    // }
-    // Matrix RotatedY(float r) const noexcept {
-    //   float c = std::cos(r), s = std::sin(r);
+        return Matrix{1.f, 0.f, 0.f, 0.f, 0.f, c, -s, 0.f, 0.f, s, c, 0.f, 0.f, 0.f, 0.f, 1.f} * *this;
+    }
+    Matrix RotatedY (float r) const noexcept {
+        float c = std::cos (r), s = std::sin (r);
 
-    //   return Matrix{c,  0.f, s, 0.f, 0.f, 1.f, 0.f, 0.f,
-    //                 -s, 0.f, c, 0.f, 0.f, 0.f, 0.f, 1.f} *
-    //          *this;
-    // }
-    // Matrix RotatedZ(float r) const noexcept {
-    //   float c = std::cos(r), s = std::sin(r);
+        return Matrix{c, 0.f, s, 0.f, 0.f, 1.f, 0.f, 0.f, -s, 0.f, c, 0.f, 0.f, 0.f, 0.f, 1.f} * *this;
+    }
+    Matrix RotatedZ (float r) const noexcept {
+        float c = std::cos (r), s = std::sin (r);
 
-    //   return Matrix{c,   -s,  0.f, 0.f, s,   c,   0.f, 0.f,
-    //                 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f} *
-    //          *this;
-    // }
+        return Matrix{c, -s, 0.f, 0.f, s, c, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f} * *this;
+    }
 };
 
 
 inline Point operator* (Point const &lhs, Matrix const &rhs) noexcept {
+    const float v1 =
+        rhs.data[mapIndex (0, 0)] * lhs.x + rhs.data[mapIndex (1, 0)] * lhs.y + rhs.data[mapIndex (2, 0)] * lhs.z + rhs.data[mapIndex (3, 0)] * lhs.w;
+    const float v2 =
+        rhs.data[mapIndex (0, 1)] * lhs.x + rhs.data[mapIndex (1, 1)] * lhs.y + rhs.data[mapIndex (2, 1)] * lhs.z + rhs.data[mapIndex (3, 1)] * lhs.w;
+    const float v3 =
+        rhs.data[mapIndex (0, 2)] * lhs.x + rhs.data[mapIndex (1, 2)] * lhs.y + rhs.data[mapIndex (2, 2)] * lhs.z + rhs.data[mapIndex (3, 2)] * lhs.w;
+    const float v4 =
+        rhs.data[mapIndex (0, 3)] * lhs.x + rhs.data[mapIndex (1, 3)] * lhs.y + rhs.data[mapIndex (2, 3)] * lhs.z + rhs.data[mapIndex (3, 3)] * lhs.w;
+
+    return {v1, v2, v3, v4};
+}
+
+inline Vector operator* (Vector const &lhs, Matrix const &rhs) noexcept {
     const float v1 =
         rhs.data[mapIndex (0, 0)] * lhs.x + rhs.data[mapIndex (1, 0)] * lhs.y + rhs.data[mapIndex (2, 0)] * lhs.z + rhs.data[mapIndex (3, 0)] * lhs.w;
     const float v2 =

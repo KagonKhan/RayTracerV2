@@ -63,6 +63,18 @@ void Camera::onResize (Vec2i size) {
 
     RecalculateProjection ();
     RecalculateRayDirections ();
+
+
+    float half_view = std::tanf (m_VerticalFOV / 2.f);
+    float aspect    = m_ViewportWidth / m_ViewportHeight;
+    if (aspect >= 1) {
+        halfWidth  = half_view;
+        halfHeight = half_view / aspect;
+    } else {
+        halfWidth  = half_view * aspect;
+        halfHeight = half_view;
+    }
+    pxsize = 2 * halfWidth / m_ViewportWidth;
 }
 
 float Camera::GetRotationSpeed () { return 0.3f; }
@@ -70,35 +82,36 @@ float Camera::GetRotationSpeed () { return 0.3f; }
 float toRad (float deg) { return deg * 3.14159f / 180.f; }
 
 void Camera::RecalculateProjection () {
-    RayMath::Matrix result (1.0f);
+    RayMath::Matrix result (.0f);
 
     // TODO: tan instead of 2 cos / sin calls?
-    float h = std::cosf (toRad (m_VerticalFOV) / 2.0f) / std::sinf (toRad (m_VerticalFOV) / 2.0f);
-    float w = h * (float) m_ViewportHeight / (float) m_ViewportWidth;
+    float rad = toRad (m_VerticalFOV);
+    float h   = std::cosf (rad / 2.0f) / std::sinf (rad / 2.0f);
+    float w   = h * (float) m_ViewportHeight / (float) m_ViewportWidth;
 
     // Create the perspective projection matrix
-    result.data[0]         = w;
-    result.data[5]         = h;
-    result.data[2 * 4 + 2] = -(m_FarClip + m_NearClip) / (m_FarClip - m_NearClip);
-    result.data[2 * 4 + 3] = -1.0f;
-    result.data[3 * 4 + 2] = -(2.0f * m_FarClip * m_NearClip) / (m_FarClip - m_NearClip);
-    result.data[3 * 4 + 3] = 0.0f;
-    m_Projection           = result;
-    m_InverseProjection    = m_Projection.inversed ();
-}
+    result.data[RayMath::mapIndex (0, 0)] = w;
+    result.data[RayMath::mapIndex (1, 1)] = h;
+    result.data[RayMath::mapIndex (2, 2)] = -(m_FarClip + m_NearClip) / (m_FarClip - m_NearClip);
+    result.data[RayMath::mapIndex (2, 3)] = -1.0f;
+    result.data[RayMath::mapIndex (3, 2)] = -(2.0f * m_FarClip * m_NearClip) / (m_FarClip - m_NearClip);
 
+    m_Projection        = result;
+    m_InverseProjection = m_Projection.inversed ();
+
+    std::cout << "\n\nMIN: \n";
+    m_Projection.print ();
+    std::cout << "\n\nGLM: \n"
+              << glm::to_string (glm::perspectiveFov (glm::radians (m_VerticalFOV), (float) m_ViewportWidth, (float) m_ViewportHeight, m_NearClip, m_FarClip));
+    void;
+}
 
 void Camera::RecalculateView () {
     RayMath::Vector up{0.f, 1.f, 0.f};
-    RayMath::Vector forward = (m_Position + m_ForwardDirection - m_Position).normalized ();
-    RayMath::Vector left    = forward.cross (up.normalized ());
-    RayMath::Vector trueUp  = left.cross (forward);
-    RayMath::Vector nul{0.f, 0.f, 0.f, 1.f};
 
-    RayMath::Matrix orientation{left, trueUp, -forward, nul};
-
-    m_View        = orientation.translated (-m_Position.x, -m_Position.y, -m_Position.z);
+    m_View        = RayMath::Matrix::viewTransform (m_Position, RayMath::Point (0, 0, 0), up);
     m_InverseView = m_View.inversed ();
+    m_Origin      = m_InverseView * RayMath::Point (0, 0, 0);
 }
 
 void Camera::RecalculateRayDirections () {
@@ -106,19 +119,29 @@ void Camera::RecalculateRayDirections () {
 
     for (uint32_t y = 0; y < m_ViewportHeight; y++) {
         for (uint32_t x = 0; x < m_ViewportWidth; x++) {
-            Vec2f coord = {(float) x / (float) m_ViewportWidth, (float) y / (float) m_ViewportHeight};
-            coord.x     = coord.x * 2.0f - 1.0f; // -1 -> 1
-            coord.y     = coord.y * 2.0f - 1.0f; // -1 -> 1
-
-            RayMath::Point target       = RayMath::Point (coord.x, coord.y, 1, 1) * m_InverseProjection;
-            auto           targetVector = RayMath::Vector (target.x, target.y, target.z, target.w);
-            auto           normal       = (targetVector / targetVector.w);
-            normal.w                    = 0;
-            normal                      = normal.normalized ();
-            auto rayDirection           = (m_InverseView * normal); // World space;
+            Vec2f coord = {(float) x, (float) y};
 
 
-            m_RayDirections[x + y * m_ViewportWidth] = rayDirection;
+            // float xoffset = (coord.x + 0.5f) * pxsize;
+            // float yoffset = (coord.y + 0.5f) * pxsize;
+            // float world_x = halfWidth - xoffset;
+            // float world_y = halfHeight - yoffset;
+            // auto  pixel   = m_InverseView * RayMath::Point (world_x, world_y, -1);
+
+
+            coord.x = (coord.x / (float) m_ViewportWidth) * 2.0f - 1.f;
+            coord.y = (coord.y / (float) m_ViewportHeight) * 2.0f - 1.f;
+            RayMath::Vector temp{coord.x, coord.y, 1, 1};
+            auto            target = m_InverseProjection * temp;
+            target                 = target / target.w;
+            target.w               = 0;
+            target                 = target.normalized ();
+
+            auto dir = m_InverseView * target;
+            dir.w    = 0;
+
+            m_RayDirections[x + y * m_ViewportWidth] = dir;
+            // m_RayDirections[x + y * m_ViewportWidth] = (pixel - GetOrigin ()).normalized ();
         }
     }
 }

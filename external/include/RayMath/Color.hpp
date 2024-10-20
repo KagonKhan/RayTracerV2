@@ -6,18 +6,28 @@ namespace RayMath {
 struct Color {
     float r{0.f}, g{0.f}, b{0.f}, a{255.f};
 
-    inline constexpr Color () noexcept = default;
-    inline constexpr Color (float r = 0.f, float g = 0.f, float b = 0.f, float a = 255.f) noexcept : r (r), g (g), b (b), a (a) {}
+    Color (float r = 0.f, float g = 0.f, float b = 0.f, float a = 255.f) noexcept : r (r), g (g), b (b), a (a) {}
 
-    inline constexpr Color operator+ (Color const &rhs) const noexcept { return {r + rhs.r, g + rhs.g, b + rhs.b}; }
-    inline constexpr Color operator- (Color const &rhs) const noexcept { return {r - rhs.r, g - rhs.g, b - rhs.b}; }
+    Color operator+ (Color const &rhs) const noexcept { return {r + rhs.r, g + rhs.g, b + rhs.b}; }
 
-    inline constexpr Color operator* (float scalar) const noexcept { return {r * scalar, g * scalar, b * scalar}; }
-    inline constexpr Color operator* (Color const &rhs) const noexcept { return {r * rhs.r, g * rhs.g, b * rhs.b}; }
+    void operator+= (Color const &rhs) noexcept {
+        r += rhs.r;
+        g += rhs.g;
+        b += rhs.b;
+    }
+    Color operator- (Color const &rhs) const noexcept { return {r - rhs.r, g - rhs.g, b - rhs.b}; }
+
+    Color operator* (float scalar) const noexcept { return {r * scalar, g * scalar, b * scalar}; }
+    void  operator*= (Color const &c) noexcept {
+        r *= c.r;
+        g *= c.g;
+        b *= c.b;
+    }
+    Color operator* (Color const &rhs) const noexcept { return {r * rhs.r, g * rhs.g, b * rhs.b}; }
     // TODO: clamping
-    inline constexpr Color clamped () const noexcept { return {std::clamp (r, 0.f, 255.f), std::clamp (g, 0.f, 255.f), std::clamp (b, 0.f, 255.f)}; }
+    Color clamped () const noexcept { return {std::clamp (r, 0.f, 255.f), std::clamp (g, 0.f, 255.f), std::clamp (b, 0.f, 255.f)}; }
 
-    constexpr auto operator<=> (Color const &) const noexcept = default;
+    auto operator<=> (Color const &) const noexcept = default;
 
     constexpr uint32_t toRGBA () noexcept { return ((uint8_t) a << 24) | ((uint8_t) b << 16) | ((uint8_t) g << 8) | ((uint8_t) r); }
 };

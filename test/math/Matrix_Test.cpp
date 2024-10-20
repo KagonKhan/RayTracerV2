@@ -51,18 +51,6 @@ TEST_F (MatrixTests, MatrixToPointMultiplicationTest) {
     ASSERT_EQ (m * p, Point (18.f, 24.f, 33.f, 1.f));
 }
 
-#include <glm/gtx/string_cast.hpp>
-TEST_F (MatrixTests, glmtest) {
-    glm::mat4 m (1.f, 2.f, 3.f, 4.f, 2.f, 4.f, 4.f, 2.f, 8.f, 6.f, 4.f, 1.f, 0.f, 0.f, 0.f, 1.f);
-
-    glm::vec4 p (1.f, 2.f, 3.f, 1.f);
-
-    auto res = m * p;
-
-    std::cout << glm::to_string (res) << std::endl;
-
-    ASSERT_EQ (res, glm::vec4 (18.f, 24.f, 33.f, 1.f));
-}
 
 TEST_F (MatrixTests, MatrixTranspositionTest) {
     Matrix m1 (0.f, 9.f, 3.f, 0.f, 9.f, 8.f, 0.f, 8.f, 1.f, 8.f, 5.f, 3.f, 0.f, 0.f, 5.f, 8.f);

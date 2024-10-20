@@ -21,9 +21,9 @@ void App::start () {
             ImGui_ImplGlfw_Sleep (10);
             continue;
         }
-        camera.onUpdate (dtime);
         window.startFrame ();
         prepareBackground ();
+
         renderApp ();
         window.render ();
     }
@@ -67,10 +67,11 @@ void App::renderApp () {
     ImGui::End ();
 
     ImGui::Begin ("Scene");
+
     auto width  = ImGui::GetContentRegionAvail ().x;
     auto height = ImGui::GetContentRegionAvail ().y;
-
     renderer.onResize ({(int) width, (int) height});
+    camera.onUpdate (dtime / 1000.f / 1000.f);
     camera.onResize ({(int) width, (int) height});
 
     auto image = renderer.getImage ();

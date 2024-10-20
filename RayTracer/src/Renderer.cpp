@@ -4,6 +4,7 @@
 #include "RayMath/Vector.hpp"
 #include "Renderer.hpp"
 
+#include <algorithm>
 #include <execution>
 
 
@@ -25,10 +26,30 @@ void Renderer::onResize (Vec2i newSize) {
 
 
     if (static bool once = true; once) {
-        Sphere s1{{0, 0, 5}, 0.5f};
-        // Sphere s2{{50, 25.5, -75}, 20.f};
+        Sphere s1{};
+        s1.setTransform (RayMath::Matrix{1.f}.Scaled (0.33, 0.33, 0.33));
+        s1.material.color        = RayMath::Color (255, 0, 0);
+        s1.material.ambient      = 0.5f;
+        s1.material.diffuse      = 0.5f;
+        s1.material.specular     = 0.9f;
+        s1.material.shininess    = 300.f;
+        s1.material.reflective   = 0.9;
+        s1.material.transparency = 0.9;
+        s1.material.refraction   = 5;
+
+        Sphere s2{};
+        s2.setTransform (RayMath::Matrix{1.f}.translated (-3, 0, 0).Scaled (0.25, 0.25, 0.25));
+        s2.material.color        = RayMath::Color (0, 255, 255);
+        s2.material.ambient      = 0.5f;
+        s2.material.diffuse      = 0.5f;
+        s2.material.specular     = 0.9f;
+        s2.material.shininess    = 300.f;
+        s2.material.reflective   = 0.9;
+        s2.material.transparency = 0.9;
+        s2.material.refraction   = 0.5;
         w.add (std::make_shared<Sphere> (s1));
-        // w.add (std::make_shared<Sphere> (s2));
+        w.add (std::make_shared<Sphere> (s2));
+        w.add (std::make_shared<PointLight> (RayMath::Point (0, -8, 0), RayMath::Color (0.9, 0.9, 0.9)));
         once = false;
     }
 }
@@ -47,17 +68,25 @@ std::shared_ptr<Image> Renderer::render (Camera const &camera) {
     image->setData (imageData);
     return image;
 }
-
+Intersection getPositive (std::vector<Intersection> &xs) {
+    std::ranges::sort (xs, {}, &Intersection::t);
+    for (auto x : xs | std::views::filter ([] (Intersection const &x) { return x.t > 0.f; })) {
+        return x;
+    }
+    return {};
+}
 
 RayMath::Color Renderer::perPixel (Vec2i position) {
     RayMath::Ray ray;
     ray.origin    = camera->GetPosition ();
-    ray.direction = camera->GetRayDirections ()[position.y * image->getSize ().x + position.y];
+    ray.direction = camera->GetRayDirections ()[image->getSize ().x * position.y + position.x];
+    auto xs       = w.hit (ray, 0, 99999999999);
+    auto hit      = getPositive (xs);
 
-    if (w.hit (ray, 0, 99999999999)) {
-        return RayMath::Colors::Cyan;
+    if (hit.obj != nullptr) {
+        auto comps = hit.Compute (ray, xs);
+        return w.Shading (comps, 1);
     }
-
 
     RayMath::Vector unit_direction = ray.direction.normalized ();
 

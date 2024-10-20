@@ -2,6 +2,7 @@
 #include "Point.hpp"
 #include "Vector.hpp"
 
+
 namespace RayMath {
 struct Ray {
     Point  origin{};
