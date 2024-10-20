@@ -5,13 +5,33 @@
 
 #include <array>
 #include <cmath>
-
+#include <iomanip>
+#include <iostream>
 
 namespace RayMath {
+
+// TODO: Convert to multi-dim sub operator when available
+inline static constexpr std::size_t mapIndex (const std::size_t row, const std::size_t col) noexcept { return 4 * row + col; }
 
 class Matrix {
   public:
     inline const static float eps{0.00001f};
+
+    void print () {
+        std::cout << "mat4x4(";
+
+        for (int i = 0; i < 4; ++i) {
+            std::cout << "(";
+            std::cout << std::fixed << std::setprecision (6) << data[4 * i + 0] << ", ";
+            std::cout << std::fixed << std::setprecision (6) << data[4 * i + 1] << ", ";
+            std::cout << std::fixed << std::setprecision (6) << data[4 * i + 2] << ", ";
+            std::cout << std::fixed << std::setprecision (6) << data[4 * i + 3] << "),";
+        }
+
+
+        std::cout << ")";
+    }
+
 
     std::array<float, 4 * 4> data{};
     Matrix (float _)
@@ -37,9 +57,6 @@ class Matrix {
 
         return true;
     }
-
-    // TODO: Convert to multi-dim sub operator when available
-    inline static constexpr std::size_t mapIndex (const std::size_t row, const std::size_t col) noexcept { return 4 * row + col; }
 
     Matrix operator* (Matrix const &rhs) const {
         const float v1 = data[mapIndex (0, 0)] * rhs.data[mapIndex (0, 0)] + data[mapIndex (0, 1)] * rhs.data[mapIndex (1, 0)] +
@@ -177,5 +194,18 @@ class Matrix {
     // }
 };
 
+
+inline Point operator* (Point const &lhs, Matrix const &rhs) noexcept {
+    const float v1 =
+        rhs.data[mapIndex (0, 0)] * lhs.x + rhs.data[mapIndex (1, 0)] * lhs.y + rhs.data[mapIndex (2, 0)] * lhs.z + rhs.data[mapIndex (3, 0)] * lhs.w;
+    const float v2 =
+        rhs.data[mapIndex (0, 1)] * lhs.x + rhs.data[mapIndex (1, 1)] * lhs.y + rhs.data[mapIndex (2, 1)] * lhs.z + rhs.data[mapIndex (3, 1)] * lhs.w;
+    const float v3 =
+        rhs.data[mapIndex (0, 2)] * lhs.x + rhs.data[mapIndex (1, 2)] * lhs.y + rhs.data[mapIndex (2, 2)] * lhs.z + rhs.data[mapIndex (3, 2)] * lhs.w;
+    const float v4 =
+        rhs.data[mapIndex (0, 3)] * lhs.x + rhs.data[mapIndex (1, 3)] * lhs.y + rhs.data[mapIndex (2, 3)] * lhs.z + rhs.data[mapIndex (3, 3)] * lhs.w;
+
+    return {v1, v2, v3, v4};
+}
 
 } // namespace RayMath

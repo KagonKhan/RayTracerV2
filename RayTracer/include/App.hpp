@@ -10,6 +10,7 @@
 
 class App {
   public:
+    App () = default;
     void start ();
 
   private:
@@ -18,7 +19,7 @@ class App {
 
     MainWindow window{{1920, 1080}, "Raytracing"};
     Renderer   renderer;
-    Camera     camera{45.0f, 0.1f, 100.0f};
+    Camera     camera{45.f, 0.1f, 1000.0f};
     float      dtime{0.f};
     float      render_time{0.f};
 };

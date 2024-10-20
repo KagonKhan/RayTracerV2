@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD 23)
 install_conan()
 
 find_package(FMT REQUIRED)
+find_package(glm REQUIRED)
 
 add_subdirectory(external/src/ImGui)
 add_subdirectory(external/include/RayMath)

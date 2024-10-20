@@ -4,8 +4,8 @@
 
 namespace RayMath {
 struct Ray {
-    Point  origin;
-    Vector direction;
+    Point  origin{};
+    Vector direction{};
 
     Ray () = default;
     Ray (Point origin, Vector direction) : origin (origin), direction (direction) {}

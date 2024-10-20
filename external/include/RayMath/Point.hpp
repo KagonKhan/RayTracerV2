@@ -7,7 +7,7 @@ struct Point {
     Point () = default;
     Point (float x, float y, float z, float w = 1) noexcept : x (x), y (y), z (z), w (w) {}
 
-    bool operator== (Point) { return true; }
+    bool operator== (const Point &rhs) const { return true; }
 
     inline Point  operator- (Vector const &rhs) const noexcept { return Point{x - rhs.x, y - rhs.y, z - rhs.z, w - rhs.w}; }
     inline Vector operator- (Point const &rhs) const noexcept { return Vector{x - rhs.x, y - rhs.y, z - rhs.z, w - rhs.w}; }
@@ -16,3 +16,7 @@ struct Point {
 };
 
 } // namespace RayMath
+
+inline std::ostream &operator<< (std::ostream &os, RayMath::Point const &vec) {
+    return os << "vec4(" << vec.x << " " << vec.y << " " << vec.z << " " << vec.w << ")";
+}

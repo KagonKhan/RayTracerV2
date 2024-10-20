@@ -82,7 +82,9 @@
         "execution": "cpp",
         "deque": "cpp",
         "numeric": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "cstdarg": "cpp",
+        "numbers": "cpp"
     },
     "editor.formatOnSave": true,
     "clang-format.executable": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\x64\\bin\\clang-format.exe",

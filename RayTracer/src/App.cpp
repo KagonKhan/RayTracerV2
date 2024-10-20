@@ -21,7 +21,7 @@ void App::start () {
             ImGui_ImplGlfw_Sleep (10);
             continue;
         }
-
+        camera.onUpdate (dtime);
         window.startFrame ();
         prepareBackground ();
         renderApp ();

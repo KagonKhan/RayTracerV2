@@ -29,19 +29,17 @@ struct Sphere : public HitObject {
     Sphere (RayMath::Point center, float radius) : center (center), radius (radius) {}
 
     bool hit (RayMath::Ray const &ray, float ray_tmin, float ray_tmax) const override {
-        RayMath::Vector oc = center - ray.origin;
-
-        float a = ray.direction.dot (ray.direction);
-        float b = -2.f * ray.direction.dot (oc);
-        float c = oc.dot (oc) - radius * radius;
-        float d = b * b - 4 * a * c;
+        auto  origin = RayMath::Vector (ray.origin.x, ray.origin.y, ray.origin.z);
+        float a      = ray.direction.dot (ray.direction);
+        float b      = 2.f * origin.dot (ray.direction);
+        float c      = origin.dot (origin) - radius * radius;
+        float d      = b * b - 4.f * a * c;
 
         if (d < 0.f)
             return false;
 
-        float d_sqrt = std::sqrtf (d);
 
-        float root = (-b - std::sqrtf (d)) / 2.f * a;
+        float root = (-b - std::sqrtf (d)) / (2.f * a);
 
 
         if (root <= ray_tmin || ray_tmax <= root) {

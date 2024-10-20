@@ -1,4 +1,5 @@
 print_header("COMPILING RAYTRACER")
+
 add_executable(RayTracer
     src/main.cpp
     src/MainWindow.cpp
@@ -15,6 +16,7 @@ target_include_directories(RayTracer
 target_link_libraries(RayTracer
     PUBLIC fmt::fmt
     PUBLIC ImGui
+    PUBLIC glm::glm
 )
 
 set_property(TARGET RayTracer PROPERTY CXX_STANDARD 23)

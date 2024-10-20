@@ -24,5 +24,6 @@ class Renderer {
 
     std::vector<int> horIter, vertIter;
 
-    World w;
+    World         w;
+    const Camera *camera;
 };

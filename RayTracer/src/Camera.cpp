@@ -1,6 +1,12 @@
 #include "Camera.hpp"
-#include "ImGui/imgui.h"
 #include "Input.hpp"
+
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
+#include <glm/mat4x4.hpp>
+
+
 Camera::Camera (float verticalFOV, float nearClip, float farClip) : m_VerticalFOV (verticalFOV), m_NearClip (nearClip), m_FarClip (farClip) {}
 
 bool Camera::onUpdate (float ts) {
@@ -45,8 +51,9 @@ bool Camera::onUpdate (float ts) {
         RecalculateView ();
         RecalculateRayDirections ();
     }
-}
 
+    return true;
+}
 void Camera::onResize (Vec2i size) {
     if (size.x == m_ViewportWidth && size.y == m_ViewportHeight)
         return;
@@ -60,21 +67,18 @@ void Camera::onResize (Vec2i size) {
 
 float Camera::GetRotationSpeed () { return 0.3f; }
 
+float toRad (float deg) { return deg * 3.14159f / 180.f; }
+
 void Camera::RecalculateProjection () {
-    float aspect = m_ViewportWidth / m_ViewportHeight;
-
-    // Calculate the vertical field of view (fovY)
-    float fovY = 2.0f * atan (tan (m_VerticalFOV / 2.0f) / aspect); // TODO: toRadians?
-
-    // Initialize the perspective matrix to identity
     RayMath::Matrix result (1.0f);
 
-    // Calculate the tangent of half of the vertical field of view
-    float tanHalfFovy = tan (fovY / 2.0f);
+    // TODO: tan instead of 2 cos / sin calls?
+    float h = std::cosf (toRad (m_VerticalFOV) / 2.0f) / std::sinf (toRad (m_VerticalFOV) / 2.0f);
+    float w = h * (float) m_ViewportHeight / (float) m_ViewportWidth;
 
     // Create the perspective projection matrix
-    result.data[0]         = 1.0f / (aspect * tanHalfFovy);
-    result.data[5]         = 1.0f / tanHalfFovy;
+    result.data[0]         = w;
+    result.data[5]         = h;
     result.data[2 * 4 + 2] = -(m_FarClip + m_NearClip) / (m_FarClip - m_NearClip);
     result.data[2 * 4 + 3] = -1.0f;
     result.data[3 * 4 + 2] = -(2.0f * m_FarClip * m_NearClip) / (m_FarClip - m_NearClip);
@@ -106,10 +110,11 @@ void Camera::RecalculateRayDirections () {
             coord.x     = coord.x * 2.0f - 1.0f; // -1 -> 1
             coord.y     = coord.y * 2.0f - 1.0f; // -1 -> 1
 
-            RayMath::Point target       = m_InverseProjection * RayMath::Point (coord.x, coord.y, 1, 1);
+            RayMath::Point target       = RayMath::Point (coord.x, coord.y, 1, 1) * m_InverseProjection;
             auto           targetVector = RayMath::Vector (target.x, target.y, target.z, target.w);
-            auto           normal       = (targetVector / targetVector.w).normalized ();
+            auto           normal       = (targetVector / targetVector.w);
             normal.w                    = 0;
+            normal                      = normal.normalized ();
             auto rayDirection           = (m_InverseView * normal); // World space;
 
 
