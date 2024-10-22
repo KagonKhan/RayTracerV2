@@ -1,17 +1,20 @@
 #pragma once
 #include "Utils.hpp"
 
+#include <glm/glm.hpp>
+
+
 class Image {
-public:
-  Image(Vec2i size);
+  public:
+    Image (glm::vec2 size);
 
-  void setData(const int *data);
-  void resize(Vec2i newSize);
+    void setData (const int *data);
+    void resize (glm::vec2 newSize);
 
-  unsigned int getID() const { return texture; }
-  Vec2i getSize() const { return size; }
+    unsigned int getID () const { return texture; }
+    glm::vec2    getSize () const { return size; }
 
-private:
-  unsigned int texture;
-  Vec2i size;
+  private:
+    unsigned int texture;
+    glm::vec2    size;
 };

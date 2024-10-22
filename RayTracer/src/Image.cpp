@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 
 
-Image::Image (Vec2i size) : size (size) {
+Image::Image (glm::vec2 size) : size (size) {
     glGenTextures (1, &texture);
     glBindTexture (GL_TEXTURE_2D, texture);
 
@@ -20,7 +20,7 @@ void Image::setData (const int *data) {
     glBindTexture (GL_TEXTURE_2D, 0);
 }
 
-void Image::resize (Vec2i newSize) {
+void Image::resize (glm::vec2 newSize) {
     if (size == newSize)
         return;
 

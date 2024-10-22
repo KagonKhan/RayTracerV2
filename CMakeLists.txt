@@ -12,7 +12,6 @@ find_package(FMT REQUIRED)
 find_package(glm REQUIRED)
 
 add_subdirectory(external/src/ImGui)
-add_subdirectory(external/include/RayMath)
 add_subdirectory(RayTracer)
 
 # https://github.com/conan-io/cmake-conan/blob/develop2/conan_provider.cmake

@@ -87,7 +87,7 @@
         "numbers": "cpp"
     },
     "editor.formatOnSave": true,
-    "clang-format.executable": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\x64\\bin\\clang-format.exe",
+    "clang-format.executable": "C:\\Users\\DogeDen\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python312\\site-packages\\clang_format\\data\\bin\\clang-format.exe",
     "testMate.cpp.test.advancedExecutables": [
         {
             "pattern": "{build,Build,BUILD,out,Out,OUT}/**/*{test,Test,TEST}*",

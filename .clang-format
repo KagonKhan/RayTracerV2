@@ -21,6 +21,11 @@ BinPackParameters: 'true'
 
 
 
+
+
+
+
+
 BreakBeforeTernaryOperators: 'true'
 BreakStringLiterals: 'true'
 ColumnLimit: '160'

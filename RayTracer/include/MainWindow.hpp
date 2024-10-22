@@ -1,19 +1,20 @@
 #pragma once
-#include <string>
+#include "Utils.hpp"
 
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <string>
 
-#include "Utils.hpp"
 class MainWindow {
-public:
-  MainWindow(Vec2i size, const std::string &name);
-  ~MainWindow();
+  public:
+    MainWindow (glm::vec2 size, const std::string &name);
+    ~MainWindow ();
 
-  operator GLFWwindow *() const { return window; }
+    operator GLFWwindow * () const { return window; }
 
-  void startFrame();
-  void render();
+    void startFrame ();
+    void render ();
 
-private:
-  GLFWwindow *window{nullptr};
+  private:
+    GLFWwindow *window{nullptr};
 };

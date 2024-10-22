@@ -2,11 +2,18 @@ print_header("COMPILING RAYTRACER")
 
 add_executable(RayTracer
     src/main.cpp
+
     src/MainWindow.cpp
     src/App.cpp
+
     src/Image.cpp
     src/Renderer.cpp
     src/Camera.cpp
+
+    include/RayObjects/Scene.hpp
+    include/RayObjects/Material.hpp
+    include/RayObjects/Objects.hpp
+    include/RayObjects/Ray.hpp
 )
 
 target_include_directories(RayTracer

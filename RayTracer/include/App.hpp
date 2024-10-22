@@ -19,6 +19,7 @@ class App {
 
     MainWindow window{{1920, 1080}, "Raytracing"};
     Renderer   renderer;
+    Scene      scene;
     Camera     camera{45.f, 0.1f, 1000.0f};
     float      dtime{0.f};
     float      render_time{0.f};

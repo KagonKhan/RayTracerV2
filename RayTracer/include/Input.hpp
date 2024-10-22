@@ -1,6 +1,8 @@
 #pragma once
 #include "MainWindow.hpp"
 
+#include <glm/glm.hpp>
+
 class Input {
   public:
     enum class MouseButton : short int {
@@ -17,7 +19,7 @@ class Input {
         Q = GLFW_KEY_Q,
     };
 
-    static Vec2f MousePosition () {
+    static glm::vec2 MousePosition () {
         double xpos, ypos;
         glfwGetCursorPos (*_window, &xpos, &ypos);
         return {(float) xpos, (float) ypos};

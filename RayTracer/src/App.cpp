@@ -60,7 +60,7 @@ void App::renderApp () {
     ImGui::Text ("Render time %.3f ms", render_time);
     if (ImGui::Button ("Render")) {
         auto t1 = std::chrono::high_resolution_clock::now ();
-        renderer.render (camera);
+        renderer.render (camera, scene);
         auto t2     = std::chrono::high_resolution_clock::now ();
         render_time = std::chrono::duration_cast<std::chrono::microseconds> (t2 - t1).count () / 1000.f;
     }
@@ -70,9 +70,11 @@ void App::renderApp () {
 
     auto width  = ImGui::GetContentRegionAvail ().x;
     auto height = ImGui::GetContentRegionAvail ().y;
-    renderer.onResize ({(int) width, (int) height});
     camera.onUpdate (dtime / 1000.f / 1000.f);
     camera.onResize ({(int) width, (int) height});
+    renderer.onResize ({(int) width, (int) height});
+
+    renderer.render (camera, scene);
 
     auto image = renderer.getImage ();
 
