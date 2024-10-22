@@ -13,9 +13,16 @@ struct Color;
 }
 class Renderer {
   public:
+    struct Settings {
+        bool Accumulate = true;
+        int  bounces    = 9;
+    } settings;
+
+  public:
     void                   onResize (glm::uvec2 newSize);
     void                   render (Camera const &camera, Scene const &scene);
     std::shared_ptr<Image> getImage () { return image; }
+    void                   ResetFrameIndex () { m_FrameIndex = 1; }
 
   private:
     struct HitPayload {
@@ -33,7 +40,9 @@ class Renderer {
 
 
     std::shared_ptr<Image> image{new Image ({0, 0})};
-    int                   *imageData = nullptr;
+    int                   *imageData          = nullptr;
+    glm::vec4             *m_AccumulationData = nullptr;
+    int                    m_FrameIndex{1};
 
     std::vector<int> m_ImageHorizontalIter, m_ImageVerticalIter;
 

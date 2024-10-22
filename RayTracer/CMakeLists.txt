@@ -10,6 +10,7 @@ add_executable(RayTracer
     src/Renderer.cpp
     src/Camera.cpp
 
+    include/Utils.hpp
     include/RayObjects/Scene.hpp
     include/RayObjects/Material.hpp
     include/RayObjects/Objects.hpp

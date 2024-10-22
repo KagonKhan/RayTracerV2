@@ -4,6 +4,8 @@
 #include <fmt/format.h>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <glm/mat4x4.hpp>
 
@@ -44,12 +46,26 @@ bool Camera::onUpdate (float ts) {
         moved = true;
     }
 
+    if (Input::IsButtonPressed (Input::MouseButton::RIGHT)) {
+        if (moveDelta.x != 0.0f || moveDelta.y != 0.0f) {
+            float pitchDelta = moveDelta.y * rotationSpeed;
+            float yawDelta   = moveDelta.x * rotationSpeed;
+
+            glm::quat q = glm::normalize (glm::cross (glm::angleAxis (-pitchDelta, rightDirection), glm::angleAxis (-yawDelta, glm::vec3 (0.f, 1.0f, 0.0f))));
+            m_ForwardDirection = glm::rotate (q, m_ForwardDirection);
+
+            moved = true;
+        }
+    }
+
+
     if (moved) {
         RecalculateView ();
         RecalculateRayDirections ();
     }
 
-    return true;
+
+    return moved;
 }
 void Camera::onResize (glm::vec2 newSize) {
     if ((glm::uvec2) newSize == m_ViewportSize)
