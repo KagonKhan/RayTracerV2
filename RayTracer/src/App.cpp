@@ -152,7 +152,7 @@ void App::renderSettingsGUI () {
     if (ImGui::Button ("RESET")) {
         renderer.ResetFrameIndex ();
     }
-    ImGui::DragInt ("Max bounces", &renderer.settings.bounces, 0.1f, 0, 20);
+    ImGui::DragInt ("Max bounces", &renderer.settings.bounces, 0.1f, 0, 500);
     ImGui::End ();
 }
 
@@ -196,32 +196,28 @@ void App::ObjectEditor::renderListOfObjects () {
 }
 
 void App::ObjectEditor::renderObjectDetails () {
-    auto &spheres = scene.spheres;
+    Sphere &sphere = scene.spheres[selectedIndex];
 
-
-    ImGui::Separator ();
-    ImGui::Dummy ({0.0f, 20.f});
     ImGui::PushID (selectedIndex);
+    {
+        ImGui::Separator ();
+        ImGui::Dummy ({0.0f, 20.f});
+        ImGui::Text ("Object data");
+        ImGui::DragFloat3 ("Position", glm::value_ptr (sphere.position), 0.1f);
+        ImGui::DragFloat ("Radius", &sphere.radius, 0.1f);
+        ImGui::DragInt ("Material", &sphere.materialIndex, 1.0f, 0, (int) scene.materials.size () - 1);
+    }
+    {
+        ImGui::Separator ();
+        ImGui::Dummy ({0.0f, 20.f});
 
-    Sphere &sphere = spheres[selectedIndex];
-    ImGui::Text ("Object data");
-    ImGui::DragFloat3 ("Position", glm::value_ptr (sphere.position), 0.1f);
-    ImGui::DragFloat ("Radius", &sphere.radius, 0.1f);
-    ImGui::DragInt ("Material", &sphere.materialIndex, 1.0f, 0, (int) scene.materials.size () - 1);
-
-    ImGui::Separator ();
-    ImGui::Dummy ({0.0f, 20.f});
-
-
-    Material &material = scene.materials[sphere.materialIndex];
-    ImGui::Text ("Material data");
-    ImGui::ColorEdit3 ("Albedo", glm::value_ptr (material.Albedo));
-    ImGui::DragFloat ("Roughness", &material.Roughness, 0.05f, 0.0f, 1.0f);
-    ImGui::DragFloat ("Metallic", &material.Metallic, 0.05f, 0.0f, 1.0f);
-    ImGui::ColorEdit3 ("Emission Color", glm::value_ptr (material.EmissionColor));
-    ImGui::DragFloat ("Emission Power", &material.EmissionPower, 0.05f, 0.0f, FLT_MAX);
-
-    ImGui::Separator ();
-
+        Material &material = scene.materials[sphere.materialIndex];
+        ImGui::Text ("Material data");
+        ImGui::ColorEdit3 ("Albedo", glm::value_ptr (material.Albedo));
+        ImGui::DragFloat ("Roughness", &material.Roughness, 0.05f, 0.0f, 1.0f);
+        ImGui::DragFloat ("Metallic", &material.Metallic, 0.005f, 0.0f, 1.0f);
+        ImGui::ColorEdit3 ("Emission Color", glm::value_ptr (material.EmissionColor));
+        ImGui::DragFloat ("Emission Power", &material.EmissionPower, 0.05f, 0.0f, FLT_MAX);
+    }
     ImGui::PopID ();
 }
