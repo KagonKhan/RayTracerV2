@@ -12,7 +12,7 @@ void App::start () {
     auto lastTime = std::chrono::high_resolution_clock::now ();
     while (!glfwWindowShouldClose (window)) {
         auto now      = std::chrono::high_resolution_clock::now ();
-        dtime         = std::chrono::duration_cast<std::chrono::microseconds> (now - lastTime).count ();
+        dtime         = std::chrono::duration_cast<std::chrono::microseconds> (now - lastTime).count () / 1000.f;
         lastTime      = now;
         auto lastTime = std::chrono::high_resolution_clock::now ();
         glfwPollEvents ();
@@ -56,7 +56,7 @@ void App::prepareBackground () {
 
 void App::renderApp () {
     ImGui::Begin ("Settings");
-    ImGui::Text ("Current frame rate %.3f ms", dtime / 1000.f);
+    ImGui::Text ("Current frame rate %.3f ms", dtime);
     ImGui::Text ("Render time %.3f ms", render_time);
     if (ImGui::Button ("Render")) {
         auto t1 = std::chrono::high_resolution_clock::now ();
@@ -70,7 +70,7 @@ void App::renderApp () {
 
     auto width  = ImGui::GetContentRegionAvail ().x;
     auto height = ImGui::GetContentRegionAvail ().y;
-    camera.onUpdate (dtime / 1000.f / 1000.f);
+    camera.onUpdate (dtime / 1000.f);
     camera.onResize ({(int) width, (int) height});
     renderer.onResize ({(int) width, (int) height});
 

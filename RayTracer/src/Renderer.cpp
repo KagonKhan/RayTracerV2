@@ -4,7 +4,7 @@
 #include <execution>
 
 
-void Renderer::onResize (glm::vec2 newSize) {
+void Renderer::onResize (glm::uvec2 newSize) {
     if (newSize != image->getSize ()) {
         image->resize (newSize);
 
@@ -38,7 +38,7 @@ void Renderer::render (Camera const &camera, Scene const &scene) {
 glm::vec4 Renderer::perPixel (int x, int y) {
     Ray ray;
     ray.origin    = camera->GetPosition ();
-    ray.direction = camera->GetRayDirections ()[image->getSize ().x * y + x];
+    ray.direction = camera->GetRayDirections ()[(int) image->getSize ().x * y + x];
 
     return Colors::Cyan;
 }

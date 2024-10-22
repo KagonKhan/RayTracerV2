@@ -6,15 +6,15 @@
 
 class Image {
   public:
-    Image (glm::vec2 size);
+    Image (glm::uvec2 size);
 
     void setData (const int *data);
-    void resize (glm::vec2 newSize);
+    void resize (glm::uvec2 newSize);
 
     unsigned int getID () const { return texture; }
-    glm::vec2    getSize () const { return size; }
+    glm::uvec2   getSize () const { return size; }
 
   private:
     unsigned int texture;
-    glm::vec2    size;
+    glm::uvec2   size;
 };

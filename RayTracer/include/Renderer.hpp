@@ -13,7 +13,7 @@ struct Color;
 }
 class Renderer {
   public:
-    void                   onResize (glm::vec2 newSize);
+    void                   onResize (glm::uvec2 newSize);
     void                   render (Camera const &camera, Scene const &scene);
     std::shared_ptr<Image> getImage () { return image; }
 
