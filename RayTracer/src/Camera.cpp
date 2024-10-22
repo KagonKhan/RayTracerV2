@@ -68,13 +68,13 @@ bool Camera::onUpdate (float ts) {
     return moved;
 }
 void Camera::onResize (glm::vec2 newSize) {
-    if ((glm::uvec2) newSize == m_ViewportSize)
+    if (m_ViewportSize == (glm::uvec2) newSize)
         return;
 
     m_ViewportSize = (glm::uvec2) newSize;
 
-    RecalculateProjection ();
-    RecalculateRayDirections ();
+   RecalculateProjection ();
+   RecalculateRayDirections ();
 }
 
 

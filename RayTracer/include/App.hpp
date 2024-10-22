@@ -20,7 +20,7 @@ class App {
     void renderObjectSettings ();
     void renderSettingsGUI ();
 
-    MainWindow window{{1920, 1080}, "Raytracing"};
+    MainWindow window{{800, 600}, "Raytracing"};
     Renderer   renderer;
     Scene      scene;
     Camera     camera{45.f, 0.1f, 1000.0f};

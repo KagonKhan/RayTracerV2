@@ -4,7 +4,6 @@
 
 
 int main () {
-    std::cout << sizeof (glm::vec2);
     App app;
     app.start ();
 

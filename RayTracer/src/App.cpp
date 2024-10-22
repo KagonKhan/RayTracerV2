@@ -117,11 +117,9 @@ void App::renderScene () {
     camera.onResize ({(int) width, (int) height});
     renderer.onResize ({(int) width, (int) height});
 
-#ifdef NDEBUG
 
     renderer.render (camera, scene);
 
-#endif
 
     auto image = renderer.getImage ();
 

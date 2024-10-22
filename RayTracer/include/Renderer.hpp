@@ -15,7 +15,7 @@ class Renderer {
   public:
     struct Settings {
         bool Accumulate = true;
-        int  bounces    = 9;
+        int  bounces    = 200;
     } settings;
 
   public:

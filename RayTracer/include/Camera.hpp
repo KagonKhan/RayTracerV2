@@ -37,5 +37,5 @@ struct Camera {
     std::vector<glm::vec3> m_RayDirections;
 
     glm::vec2  m_LastMousePosition{0.0f, 0.0f};
-    glm::uvec2 m_ViewportSize;
+    glm::uvec2 m_ViewportSize{0.0f, 0.0f};
 };
