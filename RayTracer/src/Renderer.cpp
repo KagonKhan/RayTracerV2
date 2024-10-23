@@ -57,13 +57,19 @@ void Renderer::render (Camera const &camera, Scene const &scene) {
         m_FrameIndex = 1;
 }
 
+
+float reflectance (double cosine, double refraction_index) {
+    auto r0 = (1 - refraction_index) / (1 + refraction_index);
+    r0 *= r0;
+    return r0 + (1 - r0) * std::pow ((1 - cosine), 5);
+}
 glm::vec4 Renderer::perPixel (int x, int y) {
     Ray ray;
     ray.origin    = camera->GetPosition ();
     ray.direction = camera->GetRayDirections ()[(int) image->getSize ().x * y + x];
 
     glm::vec3 light (0.0f);
-    glm::vec3 contribution (1.0f);
+    glm::vec3 contribution (0.9f);
     uint32_t  seed = x + y * image->getSize ().x * m_FrameIndex;
 
     for (int i = 0; i < settings.bounces; i++) {
@@ -80,16 +86,57 @@ glm::vec4 Renderer::perPixel (int x, int y) {
         const Material &material = scene->materials[sphere.materialIndex];
 
 
-        contribution *= material.Albedo;
-        light += material.GetEmission ();
+        // this is similar to recursive calls;
+        ray.origin = payload.WorldPosition + payload.WorldNormal * 0.000001f;
+        if (material.Refractive > 0.f) {
+            refraction (payload, sphere, ray, material, seed, contribution);
+        } else if (material.Metallic > 0.f) {
+            contribution *= material.Albedo;
+            contribution *= material.Metallic;
+            auto reflected = glm::normalize (glm ::reflect (ray.direction, payload.WorldNormal));
+            ray.direction  = reflected + material.Roughness * Random::InUnitHemiSphere (seed, payload.WorldNormal);
+        } else if (material.Refractive <= 0.0f && material.Metallic <= 0.0f) {
+            contribution *= material.Albedo;
+            ray.direction = glm::normalize (payload.WorldNormal + Random::InUnitHemiSphere (seed, payload.WorldNormal));
+        }
 
-        ray.origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
-        // ray.direction = glm::reflect (ray.direction, payload.WorldNormal + material.Roughness * Random::Vec3 (-0.5f,
-        // 0.5f));
-        ray.direction = glm::normalize (payload.WorldNormal + Random::InUnitHemiSphere (seed, payload.WorldNormal));
+        light += material.GetEmission ();
     }
 
     return glm::vec4 (light, 1.0f);
+}
+
+void Renderer::refraction (Renderer::HitPayload &payload, const Sphere &sphere, Ray &ray, const Material &material,
+                           uint32_t &seed, glm::vec3 &contribution) {
+    payload.WorldNormal = glm::normalize (payload.WorldPosition);
+    ray.direction       = glm::normalize (ray.direction);
+
+    auto  out_normal       = glm::normalize (payload.WorldPosition - sphere.position);
+    bool  front_face       = glm::dot (ray.direction, out_normal) < 0;
+    float refractive_index = material.Refractive;
+
+    if (!front_face) {
+        payload.WorldNormal = -payload.WorldNormal;
+    } else {
+        refractive_index = 1.0f / material.Refractive;
+    }
+
+    ray.origin = payload.WorldPosition + payload.WorldNormal * 0.00000001f;
+
+    float cos_theta = glm::dot (-ray.direction, payload.WorldNormal);
+    float sin_theta = std::sqrtf (1.0f - cos_theta * cos_theta);
+
+    bool cannot_refract = refractive_index * sin_theta > 1.0f;
+
+    if (cannot_refract || reflectance (cos_theta, refractive_index) > Random::RandomFloatPCG (seed)) {
+        contribution *= material.Albedo;
+        auto reflected = glm::normalize (glm ::reflect (ray.direction, payload.WorldNormal));
+        ray.direction  = reflected + material.Roughness * Random::InUnitHemiSphere (seed, payload.WorldNormal);
+    } else {
+        auto refracted = glm::normalize (
+            glm ::refract (glm::normalize (ray.direction), glm::normalize (payload.WorldNormal), refractive_index));
+        ray.direction = refracted;
+    }
 }
 
 

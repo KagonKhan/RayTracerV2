@@ -15,7 +15,7 @@ class Renderer {
   public:
     struct Settings {
         bool Accumulate = true;
-        int  bounces    = 200;
+        int  bounces    = 10;
     } settings;
 
   public:
@@ -34,6 +34,8 @@ class Renderer {
     };
 
     glm::vec4  perPixel (int x, int y);
+    void       refraction (Renderer::HitPayload &payload, const Sphere &sphere, Ray &ray, const Material &material,
+                           uint32_t &seed, glm::vec3 &contribution);
     HitPayload TraceRay (const Ray &ray);
     HitPayload ClosestHit (const Ray &ray, float hitDistance, int objectIndex);
     HitPayload Miss (const Ray &ray);

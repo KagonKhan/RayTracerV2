@@ -16,6 +16,8 @@ class Random {
         return (float) s_Distribution (s_RandomEngine) / (float) std::numeric_limits<uint32_t>::max ();
     }
 
+    static double Double () { return s_Distribution (s_RandomEngine) / std::numeric_limits<uint32_t>::max (); }
+
 
     static glm::vec3 Vec3 () { return glm::vec3 (Float (), Float (), Float ()); }
     static glm::vec3 Vec3 (float min, float max) {

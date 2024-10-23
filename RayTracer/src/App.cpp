@@ -10,42 +10,125 @@
 
 
 void init (Scene &s) {
-    Material &pinkSphere = s.materials.emplace_back ();
-    pinkSphere.Albedo    = {1.0f, 0.0f, 1.0f};
-    pinkSphere.Roughness = 0.0f;
+    // Material &left  = s.materials.emplace_back ();
+    // left.Roughness  = 0.0f;
+    // left.Refractive = 1.5;
 
-    Material &blueSphere = s.materials.emplace_back ();
-    blueSphere.Albedo    = {0.2f, 0.3f, 1.0f};
-    blueSphere.Roughness = 0.1f;
+    // Material &bubble  = s.materials.emplace_back ();
+    // bubble.Roughness  = 0.0f;
+    // bubble.Refractive = 1.0f / 1.5f;
 
-    Material &orangeSphere     = s.materials.emplace_back ();
-    orangeSphere.Albedo        = {0.8f, 0.5f, 0.2f};
-    orangeSphere.Roughness     = 0.1f;
-    orangeSphere.EmissionColor = orangeSphere.Albedo;
-    orangeSphere.EmissionPower = 2.0f;
+    // Material &blueSphere = s.materials.emplace_back ();
+    // blueSphere.Albedo    = {0.2f, 0.3f, 1.0f};
+    // blueSphere.Roughness = 0.1f;
+
+    // Material &orangeSphere     = s.materials.emplace_back ();
+    // orangeSphere.Albedo        = {0.8f, 0.5f, 0.2f};
+    // orangeSphere.Roughness     = 0.1f;
+    // orangeSphere.EmissionColor = orangeSphere.Albedo;
+    // orangeSphere.EmissionPower = 2.0f;
+
+    // {
+    //     Sphere sphere;
+    //     sphere.position      = {-1.0, 0.0, -1.0};
+    //     sphere.radius        = 0.5f;
+    //     sphere.materialIndex = 0;
+    //     s.spheres.push_back (sphere);
+    // }
+
+    // {
+    //     Sphere sphere;
+    //     sphere.position      = {-1.0, 0.0, -1.0};
+    //     sphere.radius        = 0.4f;
+    //     sphere.materialIndex = 1;
+    //     s.spheres.push_back (sphere);
+    // }
+
+    // {
+    //     Sphere sphere;
+    //     sphere.position      = {0.0f, -101.0f, 0.0f};
+    //     sphere.radius        = 100.0f;
+    //     sphere.materialIndex = 2;
+    //     s.spheres.push_back (sphere);
+    // }
+
 
     {
-        Sphere sphere;
-        sphere.position      = {0.0f, 0.0f, 0.0f};
-        sphere.radius        = 1.0f;
-        sphere.materialIndex = 0;
-        s.spheres.push_back (sphere);
+        auto &ground_material  = s.materials.emplace_back ();
+        ground_material.Albedo = glm::vec3 (0.5f);
+
+
+        auto &ground         = s.spheres.emplace_back ();
+        ground.position      = glm::vec3 (0, -1000, 0);
+        ground.radius        = 1000;
+        ground.materialIndex = s.materials.size () - 1;
     }
 
-    {
-        Sphere sphere;
-        sphere.position      = {2.0f, 0.0f, 0.0f};
-        sphere.radius        = 1.0f;
-        sphere.materialIndex = 2;
-        s.spheres.push_back (sphere);
+    for (int a = -11; a < 11; a++) {
+        for (int b = -11; b < 11; b++) {
+            auto      choose_mat = Random::Float ();
+            glm::vec3 center (a + 0.9 * Random::Float (), 0.2, b + 0.9 * Random::Float ());
+
+            if ((center - glm::vec3 (4, 0.2, 0)).length () > 0.9) {
+                auto &sphere_material = s.materials.emplace_back ();
+
+                if (choose_mat < 0.8) {
+                    // diffuse
+                    auto albedo            = Random::Vec3 () * Random::Vec3 ();
+                    sphere_material.Albedo = albedo;
+                } else if (choose_mat < 0.95) {
+                    // metal
+                    auto albedo               = Random::Vec3 (0.5, 1);
+                    auto fuzz                 = Random::Float () / 2.f;
+                    sphere_material.Roughness = fuzz;
+                    sphere_material.Albedo    = albedo;
+                    sphere_material.Metallic  = 0.9f;
+                } else {
+                    // glass
+                    sphere_material.Refractive = 1.5f;
+                }
+
+                auto &s1         = s.spheres.emplace_back ();
+                s1.position      = center;
+                s1.radius        = 0.2;
+                s1.materialIndex = s.materials.size () - 1;
+            }
+        }
     }
 
+
     {
-        Sphere sphere;
-        sphere.position      = {0.0f, -101.0f, 0.0f};
-        sphere.radius        = 100.0f;
-        sphere.materialIndex = 1;
-        s.spheres.push_back (sphere);
+        auto &material1      = s.materials.emplace_back ();
+        material1.Refractive = 1.5f;
+
+        auto &s1         = s.spheres.emplace_back ();
+        s1.position      = glm::vec3 (0, 1, 0);
+        s1.radius        = 1;
+        s1.materialIndex = s.materials.size () - 1;
+    }
+
+
+    {
+        auto &material1  = s.materials.emplace_back ();
+        material1.Albedo = glm::vec3 (0.4, 0.2, 0.1);
+
+        auto &s1         = s.spheres.emplace_back ();
+        s1.position      = glm::vec3 (-4, 1, 0);
+        s1.radius        = 1;
+        s1.materialIndex = s.materials.size () - 1;
+    }
+
+
+    {
+        auto &material1     = s.materials.emplace_back ();
+        material1.Albedo    = glm::vec3 (0.7, 0.6, 0.5);
+        material1.Metallic  = 0.9f;
+        material1.Roughness = 0.0f;
+
+        auto &s1         = s.spheres.emplace_back ();
+        s1.position      = glm::vec3 (4, 1, 0);
+        s1.radius        = 1;
+        s1.materialIndex = s.materials.size () - 1;
     }
 }
 
@@ -78,8 +161,9 @@ void App::start () {
 }
 
 void App::prepareBackground () {
-    const static ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
-                                                 ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+    const static ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking |
+                                                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
+                                                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
                                                  ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
     const ImGuiViewport *viewport = ImGui::GetMainViewport ();
@@ -123,7 +207,8 @@ void App::renderScene () {
 
     auto image = renderer.getImage ();
 
-    ImGui::Image ((ImTextureID) (intptr_t) image->getID (), {(float) image->getSize ().x, (float) image->getSize ().y}, ImVec2 (0, 1), ImVec2 (1, 0));
+    ImGui::Image ((ImTextureID) (intptr_t) image->getID (), {(float) image->getSize ().x, (float) image->getSize ().y},
+                  ImVec2 (0, 1), ImVec2 (1, 0));
     ImGui::End ();
 }
 
@@ -179,8 +264,8 @@ void App::ObjectEditor::renderListOfObjects () {
     ImGui::Dummy ({0.0f, 20.f});
 
     if (ImGui::Button ("Add Sphere")) {
-        spheres.emplace_back ();
         scene.materials.emplace_back ();
+        spheres.emplace_back ();
         spheres.back ().materialIndex = scene.materials.size () - 1;
         selectedIndex                 = spheres.size () - 1;
     }
@@ -212,8 +297,9 @@ void App::ObjectEditor::renderObjectDetails () {
         Material &material = scene.materials[sphere.materialIndex];
         ImGui::Text ("Material data");
         ImGui::ColorEdit3 ("Albedo", glm::value_ptr (material.Albedo));
-        ImGui::DragFloat ("Roughness", &material.Roughness, 0.05f, 0.0f, 1.0f);
+        ImGui::DragFloat ("Roughness", &material.Roughness, 0.005f, 0.0f, 1.0f);
         ImGui::DragFloat ("Metallic", &material.Metallic, 0.005f, 0.0f, 1.0f);
+        ImGui::DragFloat ("Refractive", &material.Refractive, 0.005f, 0.0f, 5.0f);
         ImGui::ColorEdit3 ("Emission Color", glm::value_ptr (material.EmissionColor));
         ImGui::DragFloat ("Emission Power", &material.EmissionPower, 0.05f, 0.0f, FLT_MAX);
     }
