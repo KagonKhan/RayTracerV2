@@ -64,37 +64,37 @@ void init (Scene &s) {
         ground.materialIndex = s.materials.size () - 1;
     }
 
-    // for (int a = -11; a < 11; a++) {
-    //     for (int b = -11; b < 11; b++) {
-    //         auto      choose_mat = Random::Float ();
-    //         glm::vec3 center (a + 0.9 * Random::Float (), 0.2, b + 0.9 * Random::Float ());
+    for (int a = -11; a < 11; a++) {
+        for (int b = -11; b < 11; b++) {
+            auto      choose_mat = Random::Float ();
+            glm::vec3 center (a + 0.9 * Random::Float (), 0.2, b + 0.9 * Random::Float ());
 
-    //         if ((center - glm::vec3 (4, 0.2, 0)).length () > 0.9) {
-    //             auto &sphere_material = s.materials.emplace_back ();
+            if ((center - glm::vec3 (4, 0.2, 0)).length () > 0.9) {
+                auto &sphere_material = s.materials.emplace_back ();
 
-    //             if (choose_mat < 0.8) {
-    //                 // diffuse
-    //                 auto albedo            = Random::Vec3 () * Random::Vec3 ();
-    //                 sphere_material.Albedo = albedo;
-    //             } else if (choose_mat < 0.95) {
-    //                 // metal
-    //                 auto albedo               = Random::Vec3 (0.5, 1);
-    //                 auto fuzz                 = Random::Float () / 2.f;
-    //                 sphere_material.Roughness = fuzz;
-    //                 sphere_material.Albedo    = albedo;
-    //                 sphere_material.Metallic  = 0.9f;
-    //             } else {
-    //                 // glass
-    //                 sphere_material.Refractive = 1.5f;
-    //             }
+                if (choose_mat < 0.8) {
+                    // diffuse
+                    auto albedo            = Random::Vec3 () * Random::Vec3 ();
+                    sphere_material.Albedo = albedo;
+                } else if (choose_mat < 0.95) {
+                    // metal
+                    auto albedo               = Random::Vec3 (0.5, 1);
+                    auto fuzz                 = Random::Float () / 2.f;
+                    sphere_material.Roughness = fuzz;
+                    sphere_material.Albedo    = albedo;
+                    sphere_material.Metallic  = 0.9f;
+                } else {
+                    // glass
+                    sphere_material.Refractive = 1.5f;
+                }
 
-    //             auto &s1         = s.spheres.emplace_back ();
-    //             s1.position      = center;
-    //             s1.radius        = 0.2;
-    //             s1.materialIndex = s.materials.size () - 1;
-    //         }
-    //     }
-    // }
+                auto &s1         = s.spheres.emplace_back ();
+                s1.position      = center;
+                s1.radius        = 0.2;
+                s1.materialIndex = s.materials.size () - 1;
+            }
+        }
+    }
 
 
     {
