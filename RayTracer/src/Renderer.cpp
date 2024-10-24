@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <execution>
 
+const Renderer::HitPayload Renderer::HitPayload::Miss;
 
 void Renderer::onResize (glm::uvec2 newSize) {
     if (newSize != image->getSize ()) {
@@ -57,12 +58,6 @@ void Renderer::render (Camera const &camera, Scene const &scene) {
         m_FrameIndex = 1;
 }
 
-
-float reflectance (double cosine, double refraction_index) {
-    auto r0 = (1 - refraction_index) / (1 + refraction_index);
-    r0 *= r0;
-    return r0 + (1 - r0) * std::pow ((1 - cosine), 5);
-}
 glm::vec4 Renderer::perPixel (int x, int y) {
     Ray ray;
     ray.origin    = camera->GetPosition ();
@@ -87,13 +82,16 @@ glm::vec4 Renderer::perPixel (int x, int y) {
 
 
         // this is similar to recursive calls;
-        ray.origin = payload.WorldPosition + payload.WorldNormal * 0.000001f;
+        ray.origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
         if (material.Refractive > 0.f) {
-            refraction (payload, sphere, ray, material, seed, contribution);
+            ray.origin          = payload.WorldPosition - payload.WorldNormal * 0.0001f;
+            auto unit_direction = glm::normalize (ray.direction);
+            ray.direction       = refraction (payload, unit_direction, seed);
+
         } else if (material.Metallic > 0.f) {
             contribution *= material.Albedo;
             contribution *= material.Metallic;
-            auto reflected = glm::normalize (glm ::reflect (ray.direction, payload.WorldNormal));
+            auto reflected = glm ::reflect (ray.direction, payload.WorldNormal);
             ray.direction  = reflected + material.Roughness * Random::InUnitHemiSphere (seed, payload.WorldNormal);
         } else if (material.Refractive <= 0.0f && material.Metallic <= 0.0f) {
             contribution *= material.Albedo;
@@ -106,36 +104,39 @@ glm::vec4 Renderer::perPixel (int x, int y) {
     return glm::vec4 (light, 1.0f);
 }
 
-void Renderer::refraction (Renderer::HitPayload &payload, const Sphere &sphere, Ray &ray, const Material &material,
-                           uint32_t &seed, glm::vec3 &contribution) {
-    payload.WorldNormal = glm::normalize (payload.WorldPosition);
-    ray.direction       = glm::normalize (ray.direction);
 
-    auto  out_normal       = glm::normalize (payload.WorldPosition - sphere.position);
-    bool  front_face       = glm::dot (ray.direction, out_normal) < 0;
-    float refractive_index = material.Refractive;
+float reflectance (double cosine, float refraction_index) {
+    auto r0 = (1.0f - refraction_index) / (1.0f + refraction_index);
+    r0 *= r0;
+    return r0 + (1.0f - r0) * std::powf ((1.0f - cosine), 5.0f);
+}
+
+glm::vec3 Renderer::refraction (Renderer::HitPayload const &payload, glm::vec3 const &rayDir, uint32_t &seed) {
+    const Sphere   &sphere     = scene->spheres[payload.ObjectIndex];
+    const Material &material   = scene->materials[sphere.materialIndex];
+    const auto      out_normal = glm::normalize (payload.WorldPosition - sphere.position);
+    const bool      front_face = glm::dot (rayDir, out_normal) < 0;
+
+    float     refractive_index = material.Refractive;
+    glm::vec3 worldNormal;
 
     if (!front_face) {
-        payload.WorldNormal = -payload.WorldNormal;
+        worldNormal = -payload.WorldNormal;
     } else {
+        worldNormal      = payload.WorldNormal;
         refractive_index = 1.0f / material.Refractive;
     }
 
-    ray.origin = payload.WorldPosition + payload.WorldNormal * 0.00000001f;
 
-    float cos_theta = glm::dot (-ray.direction, payload.WorldNormal);
-    float sin_theta = std::sqrtf (1.0f - cos_theta * cos_theta);
+    const float cos_theta = glm::dot (-rayDir, worldNormal);
+    const float sin_theta = std::sqrtf (1.0f - cos_theta * cos_theta);
 
     bool cannot_refract = refractive_index * sin_theta > 1.0f;
-
     if (cannot_refract || reflectance (cos_theta, refractive_index) > Random::RandomFloatPCG (seed)) {
-        contribution *= material.Albedo;
-        auto reflected = glm::normalize (glm ::reflect (ray.direction, payload.WorldNormal));
-        ray.direction  = reflected + material.Roughness * Random::InUnitHemiSphere (seed, payload.WorldNormal);
+        auto reflected = glm ::reflect (rayDir, worldNormal);
+        return reflected + material.Roughness * Random::InUnitHemiSphere (seed, worldNormal);
     } else {
-        auto refracted = glm::normalize (
-            glm ::refract (glm::normalize (ray.direction), glm::normalize (payload.WorldNormal), refractive_index));
-        ray.direction = refracted;
+        return glm::refract (rayDir, worldNormal, refractive_index);
     }
 }
 
@@ -143,6 +144,7 @@ void Renderer::refraction (Renderer::HitPayload &payload, const Sphere &sphere, 
 Renderer::HitPayload Renderer::TraceRay (const Ray &ray) {
     int   closestSphere = -1;
     float hitDistance   = std::numeric_limits<float>::max ();
+
     for (size_t i = 0; i < scene->spheres.size (); i++) {
         const Sphere &sphere = scene->spheres[i];
         glm::vec3     origin = ray.origin - sphere.position;
@@ -165,7 +167,7 @@ Renderer::HitPayload Renderer::TraceRay (const Ray &ray) {
     }
 
     if (closestSphere < 0)
-        return Miss (ray);
+        return HitPayload::Miss;
 
     return ClosestHit (ray, hitDistance, closestSphere);
 }
@@ -177,17 +179,11 @@ Renderer::HitPayload Renderer::ClosestHit (const Ray &ray, float hitDistance, in
 
     const Sphere &closestSphere = scene->spheres[objectIndex];
 
-    glm::vec3 origin      = ray.origin - closestSphere.position;
-    payload.WorldPosition = origin + ray.direction * hitDistance;
-    payload.WorldNormal   = glm::normalize (payload.WorldPosition);
+    const glm::vec3 origin = ray.origin - closestSphere.position;
+    payload.WorldPosition  = origin + ray.direction * hitDistance;
+    payload.WorldNormal    = glm::normalize (payload.WorldPosition);
 
     payload.WorldPosition += closestSphere.position;
 
-    return payload;
-}
-
-Renderer::HitPayload Renderer::Miss (const Ray &ray) {
-    Renderer::HitPayload payload;
-    payload.HitDistance = -1.0f;
     return payload;
 }

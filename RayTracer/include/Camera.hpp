@@ -30,7 +30,7 @@ struct Camera {
     float m_FarClip     = 1000.0f;
     float rotationSpeed = 7.3f;
 
-    glm::vec3 m_Position{0.0f, 0.0f, 9.0f};
+    glm::vec3 m_Position{0.0f, 1.0f, 9.0f};
     glm::vec3 m_ForwardDirection{0.0f, 0.0f, -1.f};
 
     // Cached ray directions

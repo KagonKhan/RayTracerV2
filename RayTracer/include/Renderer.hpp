@@ -26,19 +26,20 @@ class Renderer {
 
   private:
     struct HitPayload {
-        float     HitDistance;
-        glm::vec3 WorldPosition;
-        glm::vec3 WorldNormal;
+        int       ObjectIndex{-1};
+        float     HitDistance{-1};
+        glm::vec3 WorldPosition{};
+        glm::vec3 WorldNormal{};
 
-        int ObjectIndex;
+
+        const static HitPayload Miss;
     };
 
     glm::vec4  perPixel (int x, int y);
-    void       refraction (Renderer::HitPayload &payload, const Sphere &sphere, Ray &ray, const Material &material,
-                           uint32_t &seed, glm::vec3 &contribution);
+    glm::vec3  refraction (Renderer::HitPayload const &payload, glm::vec3 const &rayDir, uint32_t &seed);
     HitPayload TraceRay (const Ray &ray);
     HitPayload ClosestHit (const Ray &ray, float hitDistance, int objectIndex);
-    HitPayload Miss (const Ray &ray);
+    // HitPayload Miss (const Ray &ray);
 
 
     std::shared_ptr<Image> image{new Image ({0, 0})};
